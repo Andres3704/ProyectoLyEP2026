@@ -32,7 +32,7 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 
 | Participante | Mejora seleccionada | Archivos involucrados | Justificacion tecnica | Estado |
 | --- | --- | --- | --- | --- |
-| Mauricio Joaquin Coca | Prevenir caida por `JSON.parse` invalido al recuperar la sesion del administrador. | `src/context/AutorizacionesContext.jsx` | Se eligio porque un dato corrupto en `localStorage` puede provocar pantalla blanca e impedir el uso completo de la aplicacion. | Documentada en el TP; pendiente de verificar integracion en `main`. |
+| Mauricio Joaquin Coca | Prevenir caida por `JSON.parse` invalido al recuperar la sesion del administrador. | `src/context/AutorizacionesContext.jsx` | Se eligio porque un dato corrupto en `localStorage` puede provocar pantalla blanca e impedir el uso completo de la aplicacion. | Integrada en `main` mediante PR #3. |
 | Emanuel Jesus Valeriano | Depurar el dashboard y encapsular estilos del login. | `src/pages/Dashboard.jsx`, `src/css/login.css` | Se eligio para eliminar codigo muerto, reducir dependencias innecesarias y evitar que los estilos del login afecten otros formularios. | Integrada en `main`. |
 | Luciano Gabriel Giron | Corregir control de permisos basado en `localStorage`. | `src/pages/Login.jsx`, `src/pages/DetalleCliente.jsx` | Se eligio porque eliminar clientes es una accion sensible y no debe depender de un valor manipulable desde el navegador. | Integrada en `main` mediante PR #1. |
 | Luciano Gabriel Giron | Ocultar contrasena del cliente en la vista de detalle. | `src/pages/DetalleCliente.jsx` | Se eligio porque exponer contrasenas en pantalla es una mala practica de seguridad y privacidad, incluso en un prototipo. | Documentada; pendiente de integracion si no se subio el PR correspondiente. |
@@ -66,6 +66,16 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 
 **Commit relacionado:** `arreglo en la lsita de busqueda de cliente`
 
+### PR #3 - Recuperacion segura de sesion
+
+**Problema:** `AutorizacionesContext.jsx` ejecutaba `JSON.parse(adminGuardado)` sin manejo de excepciones.
+
+**Riesgo:** Si el dato guardado en `localStorage` estaba corrupto, la aplicacion podia fallar al iniciar y mostrar una pantalla en blanco.
+
+**Solucion aplicada:** Se incorporo un bloque `try/catch` al recuperar la sesion guardada. Si el parseo falla, se elimina la clave `admin` de `localStorage` y se retorna `null`, permitiendo que la aplicacion vuelva a un estado seguro.
+
+**Commit relacionado:** `fix(auth): prevenir crash por JSON.parse invalido en AutorizacionesContext`
+
 ### Mejora documentada - Ocultar contrasena del cliente
 
 **Problema:** La ficha del cliente mostraba el campo `cliente.password`.
@@ -76,39 +86,28 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 
 **Commit sugerido:** `fix(seguridad): ocultar contrasena del cliente en detalle`
 
-### Mejora documentada - Recuperacion segura de sesion
-
-**Problema:** `AutorizacionesContext.jsx` ejecuta `JSON.parse(adminGuardado)` sin manejo de excepciones.
-
-**Riesgo:** Si el dato guardado en `localStorage` esta corrupto, la aplicacion puede fallar al iniciar.
-
-**Solucion propuesta:** Envolver el parseo en `try/catch`, limpiar la clave `admin` cuando el dato sea invalido y retornar `null`.
-
-**Commit sugerido:** `fix(auth): prevenir crash por JSON parse invalido`
-
 ## Backlog priorizado
 
 1. Integrar la correccion para ocultar la contrasena del cliente en `DetalleCliente.jsx`.
-2. Integrar la recuperacion segura de sesion en `AutorizacionesContext.jsx`.
-3. Agregar manejo de errores en `DetalleCliente.jsx` para validar `res.ok`, mostrar error si falla la API y contemplar cliente inexistente.
-4. Centralizar todos los consumos de FakeStoreAPI en `clientesService.js`.
-5. Eliminar la contrasena fija `1234` en `FormCliente.jsx`.
-6. Calcular las metricas del dashboard a partir de datos reales.
-7. Normalizar mensajes, indentacion y estilo de codigo para mejorar legibilidad.
-8. Agregar pruebas automatizadas para login, rutas protegidas, listado, busqueda y detalle de cliente.
-9. Revisar si corresponde mantener datos sensibles como `username` en la ficha publica del cliente.
-10. Documentar el procedimiento de trabajo con ramas feature, commits semanticos y Pull Requests para futuras iteraciones.
+2. Agregar manejo de errores en `DetalleCliente.jsx` para validar `res.ok`, mostrar error si falla la API y contemplar cliente inexistente.
+3. Centralizar todos los consumos de FakeStoreAPI en `clientesService.js`.
+4. Eliminar la contrasena fija `1234` en `FormCliente.jsx`.
+5. Calcular las metricas del dashboard a partir de datos reales.
+6. Normalizar mensajes, indentacion y estilo de codigo para mejorar legibilidad.
+7. Agregar pruebas automatizadas para login, rutas protegidas, listado, busqueda y detalle de cliente.
+8. Revisar si corresponde mantener datos sensibles como `username` en la ficha publica del cliente.
+9. Documentar el procedimiento de trabajo con ramas feature, commits semanticos y Pull Requests para futuras iteraciones.
 
 ## Riesgos residuales
 
 - El prototipo todavia depende de FakeStoreAPI, por lo que no controla completamente la estructura ni la calidad de los datos recibidos.
 - La autorizacion del lado cliente mejora la experiencia y reduce errores visibles, pero en un sistema real las acciones criticas tambien deben validarse en backend.
 - Todavia no se evidencian pruebas automatizadas, por lo que las regresiones dependen principalmente de revision manual.
-- Algunas mejoras estan documentadas pero deben verificarse como Pull Request integrado antes de considerar la entrega final completa.
+- La mejora para ocultar la contrasena del cliente se encuentra documentada, pero debe verificarse como Pull Request integrado antes de considerar cerrada esa parte de seguridad.
 
 ## Descripcion sugerida para Pull Request de documentacion
 
-**Titulo sugerido:** `#3 Agregar ANALISIS.md del punto 5`
+**Titulo sugerido:** `#4 Agregar ANALISIS.md del punto 5`
 
 **Descripcion:**
 
@@ -126,4 +125,4 @@ Se agrega el archivo `ANALISIS.md` con el analisis tecnico profesional solicitad
 
 ## Conclusiones
 
-El equipo identifico problemas relevantes y aplico mejoras concretas sobre seguridad, robustez y mantenibilidad. Las correcciones ya integradas reducen riesgos asociados al control de acceso y al manejo de datos incompletos en el listado de clientes. Para completar la entrega con mayor solidez, se recomienda integrar las mejoras documentadas que aun no figuran en `main`, especialmente la recuperacion segura de sesion y la eliminacion de contrasenas visibles en la ficha del cliente.
+El equipo identifico problemas relevantes y aplico mejoras concretas sobre seguridad, robustez y mantenibilidad. Las correcciones ya integradas reducen riesgos asociados al control de acceso, al manejo de datos incompletos en el listado de clientes y a la recuperacion de sesiones corruptas. Para completar la entrega con mayor solidez, se recomienda integrar la mejora pendiente relacionada con la eliminacion de contrasenas visibles en la ficha del cliente y continuar con el backlog priorizado.

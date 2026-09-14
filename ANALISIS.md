@@ -27,6 +27,7 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 | H09 | El formulario de alta de cliente crea registros con contrasena fija `1234`. | Seguridad | Alto | Eliminar contrasenas por defecto o delegar la gestion de credenciales a un flujo seguro de backend. |
 | H10 | El dashboard muestra metricas fijas (`10`, `3`, `3`) en lugar de calcularlas desde datos reales. | Funcionalidad y calidad de informacion | Bajo / Medio | Calcular indicadores reales desde la fuente de datos o desde un servicio especifico. |
 | H11 | No se observan pruebas automatizadas para rutas protegidas, autenticacion, listado o detalle de clientes. | Calidad y mantenibilidad | Medio | Agregar pruebas unitarias y de integracion para los flujos principales. |
+| H12 | La pantalla de login podia quedar disponible para usuarios que ya tenian una sesion activa. | Experiencia de usuario y flujo de autenticacion | Medio | Redirigir automaticamente al dashboard cuando exista un usuario autenticado en el contexto. |
 
 ## Mejoras seleccionadas por participante
 
@@ -37,6 +38,7 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 | Luciano Gabriel Giron | Corregir control de permisos basado en `localStorage`. | `src/pages/Login.jsx`, `src/pages/DetalleCliente.jsx` | Se eligio porque eliminar clientes es una accion sensible y no debe depender de un valor manipulable desde el navegador. | Integrada en `main` mediante PR #1. |
 | Luciano Gabriel Giron | Ocultar contrasena del cliente en la vista de detalle. | `src/pages/DetalleCliente.jsx` | Se eligio porque exponer contrasenas en pantalla es una mala practica de seguridad y privacidad, incluso en un prototipo. | Documentada; pendiente de integracion si no se subio el PR correspondiente. |
 | Andres Alvaro Garcia | Evitar caida al filtrar clientes con propiedades anidadas faltantes. | `src/pages/ListaClientes.jsx` | Se eligio porque un dato incompleto de la API podia generar un `TypeError` al buscar por apellido o ciudad. | Integrada en `main` mediante PR #2. |
+| Guillermo Javier Soto | Redirigir desde login cuando el usuario ya posee sesion iniciada. | `src/pages/Login.jsx` | Se eligio porque un usuario autenticado no deberia volver a ver el formulario de inicio de sesion; mantenerlo alli genera un flujo confuso y permite reintentos innecesarios de autenticacion. | Integrada en `main` mediante PR #5. |
 
 ## Mejoras implementadas y evidencia tecnica
 
@@ -85,6 +87,16 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 
 **Commit sugerido:** `fix(seguridad): ocultar contrasena del cliente en detalle`
 
+### PR #5 - Redireccion si existe sesion iniciada
+
+**Problema:** La pantalla de login podia mostrarse aunque el usuario ya estuviera autenticado en el contexto de la aplicacion.
+
+**Riesgo:** El flujo de navegacion resultaba confuso, porque un usuario con sesion activa podia volver al formulario de login y repetir una accion que ya no correspondia.
+
+**Solucion aplicada:** Se importo `Navigate` desde `react-router-dom`, se obtuvo `admin` desde `useAutorizaciones()` y se agrego una redireccion temprana hacia `/` cuando ya existe una sesion iniciada.
+
+**Commit relacionado:** `fix(login): redirige al dashboard si el usuario posee sesion iniciada`
+
 ## Backlog priorizado
 
 1. Integrar la correccion para ocultar la contrasena del cliente en `DetalleCliente.jsx`.
@@ -93,7 +105,7 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 4. Eliminar la contrasena fija `1234` en `FormCliente.jsx`.
 5. Calcular las metricas del dashboard a partir de datos reales.
 6. Normalizar mensajes, indentacion y estilo de codigo para mejorar legibilidad.
-7. Agregar pruebas automatizadas para login, rutas protegidas, listado, busqueda y detalle de cliente.
+7. Agregar pruebas automatizadas para login, redireccion de usuarios autenticados, rutas protegidas, listado y detalle de cliente.
 8. Revisar si corresponde mantener datos sensibles como `username` en la ficha publica del cliente.
 9. Documentar el procedimiento de trabajo con ramas feature, commits semanticos y Pull Requests para futuras iteraciones.
 
@@ -124,4 +136,4 @@ Se agrega el archivo `ANALISIS.md` con el analisis tecnico profesional solicitad
 
 ## Conclusiones
 
-El equipo identifico problemas relevantes y aplico mejoras concretas sobre seguridad, robustez y mantenibilidad. Las correcciones ya integradas reducen riesgos asociados al control de acceso, al manejo de datos incompletos en el listado de clientes y a la recuperacion de sesiones corruptas. Para completar la entrega con mayor solidez, se recomienda integrar la mejora pendiente relacionada con la eliminacion de contrasenas visibles en la ficha del cliente y continuar con el backlog priorizado.
+El equipo identifico problemas relevantes y aplico mejoras concretas sobre seguridad, robustez, flujo de autenticacion y mantenibilidad. Las correcciones ya integradas reducen riesgos asociados al control de acceso, al manejo de datos incompletos en el listado de clientes, a la recuperacion de sesiones corruptas y a la navegacion de usuarios que ya poseen sesion activa. Para completar la entrega con mayor solidez, se recomienda integrar la mejora pendiente relacionada con la eliminacion de contrasenas visibles en la ficha del cliente y continuar con el backlog priorizado.

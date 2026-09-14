@@ -37,7 +37,6 @@ El prototipo cumple con el objetivo general de mostrar un panel de clientes con 
 | Luciano Gabriel Giron | Corregir control de permisos basado en `localStorage`. | `src/pages/Login.jsx`, `src/pages/DetalleCliente.jsx` | Se eligio porque eliminar clientes es una accion sensible y no debe depender de un valor manipulable desde el navegador. | Integrada en `main` mediante PR #1. |
 | Luciano Gabriel Giron | Ocultar contrasena del cliente en la vista de detalle. | `src/pages/DetalleCliente.jsx` | Se eligio porque exponer contrasenas en pantalla es una mala practica de seguridad y privacidad, incluso en un prototipo. | Documentada; pendiente de integracion si no se subio el PR correspondiente. |
 | Andres Alvaro Garcia | Evitar caida al filtrar clientes con propiedades anidadas faltantes. | `src/pages/ListaClientes.jsx` | Se eligio porque un dato incompleto de la API podia generar un `TypeError` al buscar por apellido o ciudad. | Integrada en `main` mediante PR #2. |
-| Guillermo Javier Soto | Revision tecnica pendiente de registrar. | Por definir | En los documentos revisados no se encontro una mejora individual asociada a este integrante. Se recomienda asignarle una mejora del backlog, por ejemplo manejo de errores en `DetalleCliente.jsx` o centralizacion de llamadas a la API. | Pendiente de completar por el equipo. |
 
 ## Mejoras implementadas y evidencia tecnica
 
